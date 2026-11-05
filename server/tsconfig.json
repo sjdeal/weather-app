@@ -5,7 +5,10 @@
     "outDir": "./build",
     "rootDir": "./src",
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "moduleDetection": "force",
+    "noImplicitAny": false,
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
