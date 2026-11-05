@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2025",
+    "module": "esnext",
+    "outDir": "./build",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "strict": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
