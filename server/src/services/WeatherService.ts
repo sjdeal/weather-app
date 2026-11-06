@@ -4,64 +4,100 @@ const axios : AxiosInstance = require("axios");
 const API_KEY = "3bd4d77fe48d993325318a977864f9c0";
 
 const WeatherService = {
-    //TODO: replace with api calls that don't need to do geo lookup
     getCurrentConditionsByZIPCode: function(zip: string){
         return new Promise((resolve, reject) => {
-            this.getLatLongByZIPCode(zip)
-            .then((response: any) => {
-                this.getCurrentConditions(response.lat, response.lon)
-                .then((weather_response: any) => {
-                    resolve(weather_response);
-                })
+            axios.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zip}&appid=${API_KEY}`)
+            .then((response: AxiosResponse) => {
+                resolve(this.formatWeatherData(response.data));
+            }).catch((error) => {
+                console.log(error.data);
+                reject(error);
             });
         });
     },
 
     getCurrentConditionsByCity: function(city: string){
         return new Promise((resolve, reject) => {
-            this.getLatLongByCity(city)
-            .then((response: any) => {
-                this.getCurrentConditions(response.lat, response.lon)
-                .then((weather_response: any) => {
-                    resolve(weather_response);
-                })
+            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}`)
+            .then((response: AxiosResponse) => {
+                resolve(this.formatWeatherData(response.data));
+            }).catch((error) => {
+                console.log(error.data);
+                reject(error);
             });
         });
     },
 
     getCurrentConditions: function(lat: number, lon: number){
         return new Promise((resolve, reject) => {
-            console.log(lat);
-            console.log(lon);
-            axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`)
+            let url : string = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+            axios.get(url)
             .then((response: AxiosResponse) => {
-                //TODO: organize the data returned
-                resolve(response.data);
+                resolve(this.formatWeatherData(response.data));
             }).catch((error) => {
                 console.log(error.data);
                 // reject(error);
             });
-        })
+        });
     },
 
-    getLatLongByZIPCode: function(zip: string){
-        return new Promise((resolve, reject) => {
-            axios.get(`http://api.openweathermap.org/geo/1.0/zip?zip=${zip}&appid=${API_KEY}`)
-            .then((response: AxiosResponse) => {
-                resolve(response.data);
-            })
-        })
+    formatWeatherData: function(rawData: any){
+        let formattedData: any = {
+            city: rawData.name,
+            condition: rawData.weather[0].main,
+            icon: rawData.weather[0].icon,
+            humidity: rawData.main.humidity
+        };
+
+        //Temperature - current, feels like, low, high - F and C
+        formattedData.temp = {
+            current: {
+                c: rawData.main.temp - 273.15,
+                f: (rawData.main.temp * 1.8) - 459.67
+            },
+            feelsLike: {
+                c: rawData.main.feels_like - 273.15,
+                f: (rawData.main.feels_like * 1.8) - 459.67
+            },
+            low: {
+                c: rawData.main.temp_min - 273.15,
+                f: (rawData.main.temp_min * 1.8) - 459.67
+            },
+            high: {
+                c: rawData.main.temp_max - 273.15,
+                f: (rawData.main.temp_max * 1.8) - 459.67
+            }
+        };
+
+        //Wind speed and direction
+        formattedData.wind = {
+            speed: {
+                c: rawData.wind.speed,
+                f: rawData.wind.speed * 2.237
+            },
+            dir: this.windDegreesToDir(rawData.wind.deg)
+        };
+        
+        return formattedData;
     },
 
-    getLatLongByCity: function(city: string){
-        return new Promise((resolve, reject) => {
-            axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`)
-            .then((response: AxiosResponse) => {
-                console.log("here");
-                console.log(response.data);
-                resolve(response.data[0]);
-            })
-        })
+    windDegreesToDir: function(degrees: number){
+        if(degrees < 22.5) return 'N';
+        if(degrees < 45) return 'NNE';
+        if(degrees < 67.5) return 'NE';
+        if(degrees < 90) return 'ENE';
+        if(degrees < 112.5) return 'E';
+        if(degrees < 135) return 'ESE';
+        if(degrees < 157.5) return 'SE';
+        if(degrees < 180) return 'SSE';
+        if(degrees < 202.5) return 'S';
+        if(degrees < 225) return 'SSW';
+        if(degrees < 247.5) return 'SW';
+        if(degrees < 270) return 'WSW';
+        if(degrees < 292.5) return 'W';
+        if(degrees < 315) return 'WNW';
+        if(degrees < 337.5) return 'NW';
+        if(degrees < 360) return 'NNW';
     }
 };
 
