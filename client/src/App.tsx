@@ -1,22 +1,17 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import CurrentConditions from './components/CurrentConditions';
 
-function App() {
-	const [message, setMessage] = useState('')
-	
-	useEffect(() => {
-        fetch('/api/weather/ping')
-            .then(response => response.json())
-            .then(data => setMessage(data.message))
-            .catch(error => console.error(error));
-    }, []);
+export default function App() {
+	const [message, setMessage] = useState<string>('');
+
+    useEffect(() => {document.title = "Weather"});
 
     return (
         <div>
-            <h1>React Application</h1>
+            <h1>Weather</h1>
             <p>Backend response: {message}</p>
+            <CurrentConditions/>
         </div>
     );
 }
-
-export default App
