@@ -46,34 +46,35 @@ const WeatherService = {
             city: rawData.name,
             condition: rawData.weather[0].main,
             icon: rawData.weather[0].icon,
+            iconUrl: `https://openweathermap.org/payload/api/media/file/${rawData.weather[0].icon}.png`,
             humidity: rawData.main.humidity
         };
 
         //Temperature - current, feels like, low, high - F and C
         formattedData.temp = {
             current: {
-                c: rawData.main.temp - 273.15,
-                f: (rawData.main.temp * 1.8) - 459.67
+                c: Math.round(rawData.main.temp - 273.15),
+                f: Math.round((rawData.main.temp * 1.8) - 459.67)
             },
             feelsLike: {
-                c: rawData.main.feels_like - 273.15,
-                f: (rawData.main.feels_like * 1.8) - 459.67
+                c: Math.round(rawData.main.feels_like - 273.15),
+                f: Math.round((rawData.main.feels_like * 1.8) - 459.67)
             },
             low: {
-                c: rawData.main.temp_min - 273.15,
-                f: (rawData.main.temp_min * 1.8) - 459.67
+                c: Math.round(rawData.main.temp_min - 273.15),
+                f: Math.round((rawData.main.temp_min * 1.8) - 459.67)
             },
             high: {
-                c: rawData.main.temp_max - 273.15,
-                f: (rawData.main.temp_max * 1.8) - 459.67
+                c: Math.round(rawData.main.temp_max - 273.15),
+                f: Math.round((rawData.main.temp_max * 1.8) - 459.67)
             }
         };
 
         //Wind speed and direction
         formattedData.wind = {
             speed: {
-                c: rawData.wind.speed,
-                f: rawData.wind.speed * 2.237
+                c: Math.round(rawData.wind.speed),
+                f: Math.round(rawData.wind.speed * 2.237)
             },
             dir: this.windDegreesToDir(rawData.wind.deg)
         };
