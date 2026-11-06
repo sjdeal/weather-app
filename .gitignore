@@ -1,7 +1,6 @@
 # Server gitignore
 server/node_modules/
 server/build/
-server/package-lock.json
 
 # Client gitignore
 # Logs
