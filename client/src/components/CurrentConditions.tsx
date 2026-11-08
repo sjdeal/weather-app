@@ -9,65 +9,54 @@ export default function CurrentConditions() {
     const [lon, setLon] = useState<string>('');
     const [weatherData, setWeatherData] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [tempSystem, setTempSystem] = useState<string>('F');
+    // const [tempSystem, setTempSystem] = useState<string>('F');
     const [errorMsg, setErrorMsg] = useState<string>('');
 
     function doSearch(){
-        setLoading(true);
         setErrorMsg("");
-        setWeatherData(null);
+        let url : string = '';
         if(searchMode == "zip"){
-            zipClick();
+            if(zip.trim().length > 0){
+                url = `/api/weather/current/zip/${zip}`;
+            }else{
+                setErrorMsg("Please enter a ZIP code.");
+                return;
+            }
         }else if(searchMode == "city"){
-            cityClick();
+            if(city.trim().length > 0){
+                url = `/api/weather/current/city/${city}`
+            }else{
+                setErrorMsg("Please enter a city.");
+                return;
+            }
         }else if(searchMode == "geo"){
-            coordsClick();
+            if(lat.trim().length > 0 && lon.trim().length > 0){
+                url = `/api/weather/current/geo/${lat}/${lon}`;
+            }else{
+                setErrorMsg("Please enter a latitude and longitude.");
+                return;
+            }
         }
-    }
-
-    function zipClick() {
-        if(zip.trim().length > 0){
-            fetch(`/api/weather/current/zip/${zip}`)
-            .then(response => response.json())
-            .then(data => {
-                setWeatherData(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error(error);
-                setLoading(false);
-                setErrorMsg(error.message);
-            });
-        }
-    }
-
-    function cityClick() {
-        if(city.trim().length > 0){
-            fetch(`/api/weather/current/city/${city}`)
-            .then(response => response.json())
-            .then(data => {
-                setWeatherData(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error(error)
-                setLoading(false);
-            });
-        }
-    }
-
-    function coordsClick() {
-        if(lat.trim().length > 0 && lon.trim().length > 0){
-            fetch(`/api/weather/current/geo/${lat}/${lon}`)
-            .then(response => response.json())
-            .then(data => {
-                setWeatherData(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error(error)
-                setLoading(false);
-            });
+        
+        if(url !== ''){
+            setLoading(true);
+            setWeatherData(null);
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.cod){
+                        throw new Error(`An error occurred. ${data.cod} - ${data.message}`);
+                    }
+                    setWeatherData(data);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    console.error(error);
+                    setLoading(false);
+                    setErrorMsg(error.message);
+                });
+        }else{
+            setErrorMsg(`Unable to get weather - unknown searchMode '${searchMode}'`);
         }
     }
 
@@ -75,7 +64,7 @@ export default function CurrentConditions() {
         <Container>
             <Row>
                 <Col>
-                    <Form.Select onChange={e => setSearchMode(e.target.value)}>
+                    <Form.Select onChange={e => {setSearchMode(e.target.value); setErrorMsg("");}}>
                         <option value="zip">ZIP Code</option>
                         <option value="city">City Name</option>
                         <option value="geo">Latitude/Longitude</option>
@@ -121,8 +110,10 @@ export default function CurrentConditions() {
                                 </Col>
                                 <Col xs lg="2" className='text-center align-center'>
                                     <Stack className="align-center">
-                                        <div className="display-5 font-weight-bold">{tempSystem == "F" && weatherData.temp.current.f + "°F" || weatherData.temp.current.c + "°C"}</div>
-                                        <div>Feels like {tempSystem == "F" && weatherData.temp.feelsLike.f + "°F" || weatherData.temp.current.c + "°C"}</div>
+                                        <div className="display-5 font-weight-bold">{weatherData.temp.current.f + "°F"}</div>
+                                        <div>Feels like {weatherData.temp.feelsLike.f + "°F"}</div>
+                                        {/* <div className="display-5 font-weight-bold">{tempSystem == "F" && weatherData.temp.current.f + "°F" || weatherData.temp.current.c + "°C"}</div>
+                                        <div>Feels like {tempSystem == "F" && weatherData.temp.feelsLike.f + "°F" || weatherData.temp.current.c + "°C"}</div> */}
                                     </Stack>
                                 </Col>
                             </Row>

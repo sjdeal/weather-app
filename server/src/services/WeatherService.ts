@@ -10,8 +10,8 @@ const WeatherService = {
             .then((response: AxiosResponse) => {
                 resolve(this.formatWeatherData(response.data));
             }).catch((error) => {
-                console.log(error.data);
-                reject(error);
+                console.error(error.response.data);
+                reject(error.response.data);
             });
         });
     },
@@ -22,8 +22,8 @@ const WeatherService = {
             .then((response: AxiosResponse) => {
                 resolve(this.formatWeatherData(response.data));
             }).catch((error) => {
-                console.log(error.data);
-                reject(error);
+                console.error(error.response.data);
+                reject(error.response.data);
             });
         });
     },
@@ -35,8 +35,8 @@ const WeatherService = {
             .then((response: AxiosResponse) => {
                 resolve(this.formatWeatherData(response.data));
             }).catch((error) => {
-                console.log(error.data);
-                // reject(error);
+                console.error(error.response.data);
+                reject(error.response.data);
             });
         });
     },

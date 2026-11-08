@@ -12,24 +12,33 @@ router.get('/ping', (req, res) => {
 router.get('/current/zip/:zip', (req, res) => {
     WeatherService.getCurrentConditionsByZIPCode(req.params.zip)
     .then((response) => {
-        res.json(response);
         res.statusCode = 200;
+        res.json(response);
+    }).catch((error) => {
+        res.statusCode = error.cod;
+        res.json(error);
     });
 });
 
 router.get('/current/city/:city', (req, res) => {
     WeatherService.getCurrentConditionsByCity(req.params.city)
     .then((response) => {
-        res.json(response);
         res.statusCode = 200;
+        res.json(response);
+    }).catch((error) => {
+        res.statusCode = error.cod;
+        res.json(error);
     });
 });
 
 router.get('/current/geo/:lat/:lon', (req, res) => {
     WeatherService.getCurrentConditions(Number(req.params.lat), Number(req.params.lon))
     .then((response) => {
-        res.json(response);
         res.statusCode = 200;
+        res.json(response);
+    }).catch((error) => {
+        res.statusCode = error.cod;
+        res.json(error);
     });
 });
 
