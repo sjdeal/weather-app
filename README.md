@@ -4,7 +4,7 @@
 
 This is a basic weather app that utilizes the [OpenWeather API](openweathermap.org/api) to retrieve current weather conditions by ZIP code, city name, or latitude/longitude.
 
-The app is built using TypeScript. The server utilizes Node.js with Express to handle communication with the OpenWeather API, and the client utilizes React.js using Vite to display a web interface.
+The app is built using TypeScript. The server utilizes Node.js with Express to handle communication with the OpenWeather API, and the client utilizes React.js using Vite and Bootstrap to display a web interface.
 
 ### Examples
 
