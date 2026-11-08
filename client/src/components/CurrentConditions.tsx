@@ -17,21 +17,21 @@ export default function CurrentConditions() {
         let url : string = '';
         if(searchMode == "zip"){
             if(zip.trim().length > 0){
-                url = `/api/weather/current/zip/${zip}`;
+                url = `/api/weather/current/zip/${encodeURIComponent(zip)}`;
             }else{
                 setErrorMsg("Please enter a ZIP code.");
                 return;
             }
         }else if(searchMode == "city"){
             if(city.trim().length > 0){
-                url = `/api/weather/current/city/${city}`
+                url = `/api/weather/current/city/${encodeURIComponent(city)}`
             }else{
                 setErrorMsg("Please enter a city.");
                 return;
             }
         }else if(searchMode == "geo"){
             if(lat.trim().length > 0 && lon.trim().length > 0){
-                url = `/api/weather/current/geo/${lat}/${lon}`;
+                url = `/api/weather/current/geo/${encodeURIComponent(lat)}/${encodeURIComponent(lon)}`;
             }else{
                 setErrorMsg("Please enter a latitude and longitude.");
                 return;
